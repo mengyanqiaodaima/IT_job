@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT岗位求职记录系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        
+        .student-info {
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-bottom: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            color: #666;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #d0d0d0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-danger {
+            background: #f56565;
+        }
+        
+        .btn-danger:hover {
+            background: #e53e3e;
+            box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+        }
+        
+        .search-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .job-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .job-list th,
+        .job-list td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .job-list th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .job-list tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .job-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .job-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .job-card h3 {
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .company-name {
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .salary {
+            background: #48bb78;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .job-info {
+            margin-bottom: 15px;
+        }
+        
+        .job-info-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .job-info-label {
+            width: 80px;
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #a0aec0;
+            font-style: italic;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .edit-form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .edit-form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .edit-form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #718096;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .job-list {
+                font-size: 0.9em;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .job-card-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>IT岗位求职记录系统</h1>
+            <div class="student-info">
+                学号：20234396 | 姓名：韩雨恬
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'addJob')">添加岗位</button>
+            <button class="tab-btn" onclick="openTab(event, 'jobList')">岗位列表</button>
+        </div>
+        
+        <div id="addJob" class="tab-content active">
+            <div class="success-message" id="addSuccessMessage">岗位添加成功！</div>
+            <form id="jobForm">
+                <div class="form-group">
+                    <label for="companyName">企业名称 *</label>
+                    <input type="text" id="companyName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobTitle">岗位名称 *</label>
+                    <input type="text" id="jobTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="salary">薪资范围 *</label>
+                    <input type="text" id="salary" placeholder="例如：15k-25k" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">工作地点</label>
+                    <input type="text" id="location">
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience">工作经验</label>
+                    <select id="experience">
+                        <option value="">不限</option>
+                        <option value="应届毕业生">应届毕业生</option>
+                        <option value="1年以下">1年以下</option>
+                        <option value="1-3年">1-3年</option>
+                        <option value="3-5年">3-5年</option>
+                        <option value="5-10年">5-10年</option>
+                        <option value="10年以上">10年以上</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="education">学历要求</label>
+                    <select id="education">
+                        <option value="">不限</option>
+                        <option value="大专">大专</option>
+                        <option value="本科">本科</option>
+                        <option value="硕士">硕士</option>
+                        <option value="博士">博士</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobType">工作类型</label>
+                    <select id="jobType">
+                        <option value="全职">全职</option>
+                        <option value="实习">实习</option>
+                        <option value="兼职">兼职</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="requirements">岗位要求 *</label>
+                    <textarea id="requirements" rows="5" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">岗位职责</label>
+                    <textarea id="description" rows="5"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="applicationDate">投递日期</label>
+                    <input type="date" id="applicationDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">备注</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+                
+                <button type="submit" class="btn">添加岗位</button>
+            </form>
+        </div>
+        
+        <div id="jobList" class="tab-content">
+            <div class="search-filters">
+                <div class="form-group">
+                    <label for="searchCompany">企业名称</label>
+                    <input type="text" id="searchCompany" placeholder="搜索企业">
+                </div>
+                
+                <div class="form-group">
+                    <label for="searchJob">岗位名称</label>
+                    <input type="text" id="searchJob" placeholder="搜索岗位">
+                </div>
+                
+                <div class="form-group">
+                    <label for="filterExperience">工作经验</label>
+                    <select id="filterExperience">
+                        <option value="">不限</option>
+                        <option value="应届毕业生">应届毕业生</option>
+                        <option value="1年以下">1年以下</option>
+                        <option value="1-3年">1-3年</option>
+                        <option value="3-5年">3-5年</option>
+                        <option value="5-10年">5-10年</option>
+                        <option value="10年以上">10年以上</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filterEducation">学历要求</label>
+                    <select id="filterEducation">
+                        <option value="">不限</option>
+                        <option value="大专">大专</option>
+                        <option value="本科">本科</option>
+                        <option value="硕士">硕士</option>
+                        <option value="博士">博士</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="searchJobs()">搜索</button>
+            <button class="btn btn-secondary" onclick="resetFilters()">重置筛选</button>
+            
+            <table class="job-list">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>企业名称</th>
+                        <th>岗位名称</th>
+                        <th>薪资</th>
+                        <th>地点</th>
+                        <th>经验</th>
+                        <th>学历</th>
+                        <th>投递日期</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="jobTableBody">
+                    <!-- 岗位列表将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+            
+            <div id="noDataMessage" class="no-data">暂无岗位数据</div>
+        </div>
+    </div>
+    
+    <!-- 编辑表单弹窗 -->
+    <div class="edit-form-overlay" id="editFormOverlay">
+        <div class="edit-form-container">
+            <div class="edit-form-header">
+                <h2>编辑岗位信息</h2>
+                <button class="close-btn" onclick="closeEditForm()">&times;</button>
+            </div>
+            
+            <form id="editJobForm">
+                <input type="hidden" id="editJobId">
+                
+                <div class="form-group">
+                    <label for="editCompanyName">企业名称 *</label>
+                    <input type="text" id="editCompanyName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editJobTitle">岗位名称 *</label>
+                    <input type="text" id="editJobTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editSalary">薪资范围 *</label>
+                    <input type="text" id="editSalary" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editLocation">工作地点</label>
+                    <input type="text" id="editLocation">
+                </div>
+                
+                <div class="form-group">
+                    <label for="editExperience">工作经验</label>
+                    <select id="editExperience">
+                        <option value="">不限</option>
+                        <option value="应届毕业生">应届毕业生</option>
+                        <option value="1年以下">1年以下</option>
+                        <option value="1-3年">1-3年</option>
+                        <option value="3-5年">3-5年</option>
+                        <option value="5-10年">5-10年</option>
+                        <option value="10年以上">10年以上</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editEducation">学历要求</label>
+                    <select id="editEducation">
+                        <option value="">不限</option>
+                        <option value="大专">大专</option>
+                        <option value="本科">本科</option>
+                        <option value="硕士">硕士</option>
+                        <option value="博士">博士</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editJobType">工作类型</label>
+                    <select id="editJobType">
+                        <option value="全职">全职</option>
+                        <option value="实习">实习</option>
+                        <option value="兼职">兼职</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editRequirements">岗位要求 *</label>
+                    <textarea id="editRequirements" rows="5" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editDescription">岗位职责</label>
+                    <textarea id="editDescription" rows="5"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editApplicationDate">投递日期</label>
+                    <input type="date" id="editApplicationDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="editNotes">备注</label>
+                    <textarea id="editNotes" rows="3"></textarea>
+                </div>
+                
+                <button type="submit" class="btn">保存更改</button>
+                <button type="button" class="btn btn-secondary" onclick="closeEditForm()">取消</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 初始化数据存储
+        if (!localStorage.getItem('jobs')) {
+            localStorage.setItem('jobs', JSON.stringify([]));
+        }
+        
+        // 切换标签页
+        function openTab(evt, tabName) {
+            var i, tabContent, tabLinks;
+            
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
+            }
+            
+            tabLinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // 如果切换到岗位列表，重新加载数据
+            if (tabName === 'jobList') {
+                loadJobs();
+            }
+        }
+        
+        // 添加岗位
+        document.getElementById('jobForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var jobs = JSON.parse(localStorage.getItem('jobs'));
+            
+            var newJob = {
+                id: Date.now(),
+                companyName: document.getElementById('companyName').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                salary: document.getElementById('salary').value,
+                location: document.getElementById('location').value,
+                experience: document.getElementById('experience').value,
+                education: document.getElementById('education').value,
+                jobType: document.getElementById('jobType').value,
+                requirements: document.getElementById('requirements').value,
+                description: document.getElementById('description').value,
+                applicationDate: document.getElementById('applicationDate').value,
+                notes: document.getElementById('notes').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            jobs.push(newJob);
+            localStorage.setItem('jobs', JSON.stringify(jobs));
+            
+            // 显示成功消息
+            var successMessage = document.getElementById('addSuccessMessage');
+            successMessage.style.display = 'block';
+            setTimeout(function() {
+                successMessage.style.display = 'none';
+            }, 3000);
+            
+            // 重置表单
+            this.reset();
+        });
+        
+        // 加载岗位列表
+        function loadJobs(filteredJobs = null) {
+            var jobs = filteredJobs || JSON.parse(localStorage.getItem('jobs'));
+            var tableBody = document.getElementById('jobTableBody');
+            var noDataMessage = document.getElementById('noDataMessage');
+            
+            tableBody.innerHTML = '';
+            
+            if (jobs.length === 0) {
+                noDataMessage.style.display = 'block';
+                return;
+            } else {
+                noDataMessage.style.display = 'none';
+            }
+            
+            // 按创建时间倒序排列（最新的在前面）
+            jobs.sort(function(a, b) {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+            
+            jobs.forEach(function(job, index) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${job.companyName}</td>
+                    <td>${job.jobTitle}</td>
+                    <td>${job.salary}</td>
+                    <td>${job.location || '-'}</td>
+                    <td>${job.experience || '-'}</td>
+                    <td>${job.education || '-'}</td>
+                    <td>${job.applicationDate || '-'}</td>
+                    <td class="action-buttons">
+                        <button class="btn" style="padding: 6px 12px; font-size: 0.9em" onclick="editJob(${job.id})">编辑</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.9em" onclick="deleteJob(${job.id})">删除</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // 搜索和筛选岗位
+        function searchJobs() {
+            var jobs = JSON.parse(localStorage.getItem('jobs'));
+            var searchCompany = document.getElementById('searchCompany').value.toLowerCase();
+            var searchJob = document.getElementById('searchJob').value.toLowerCase();
+            var filterExperience = document.getElementById('filterExperience').value;
+            var filterEducation = document.getElementById('filterEducation').value;
+            
+            var filteredJobs = jobs.filter(function(job) {
+                return (
+                    job.companyName.toLowerCase().includes(searchCompany) &&
+                    job.jobTitle.toLowerCase().includes(searchJob) &&
+                    (filterExperience === '' || job.experience === filterExperience) &&
+                    (filterEducation === '' || job.education === filterEducation)
+                );
+            });
+            
+            loadJobs(filteredJobs);
+        }
+        
+        // 重置筛选条件
+        function resetFilters() {
+            document.getElementById('searchCompany').value = '';
+            document.getElementById('searchJob').value = '';
+            document.getElementById('filterExperience').value = '';
+            document.getElementById('filterEducation').value = '';
+            loadJobs();
+        }
+        
+        // 删除岗位
+        function deleteJob(jobId) {
+            if (confirm('确定要删除这个岗位吗？')) {
+                var jobs = JSON.parse(localStorage.getItem('jobs'));
+                jobs = jobs.filter(function(job) {
+                    return job.id !== jobId;
+                });
+                localStorage.setItem('jobs', JSON.stringify(jobs));
+                loadJobs();
+            }
+        }
+        
+        // 打开编辑表单
+        function editJob(jobId) {
+            var jobs = JSON.parse(localStorage.getItem('jobs'));
+            var job = jobs.find(function(j) {
+                return j.id === jobId;
+            });
+            
+            if (job) {
+                document.getElementById('editJobId').value = job.id;
+                document.getElementById('editCompanyName').value = job.companyName;
+                document.getElementById('editJobTitle').value = job.jobTitle;
+                document.getElementById('editSalary').value = job.salary;
+                document.getElementById('editLocation').value = job.location || '';
+                document.getElementById('editExperience').value = job.experience || '';
+                document.getElementById('editEducation').value = job.education || '';
+                document.getElementById('editJobType').value = job.jobType || '全职';
+                document.getElementById('editRequirements').value = job.requirements;
+                document.getElementById('editDescription').value = job.description || '';
+                document.getElementById('editApplicationDate').value = job.applicationDate || '';
+                document.getElementById('editNotes').value = job.notes || '';
+                
+                document.getElementById('editFormOverlay').style.display = 'flex';
+            }
+        }
+        
+        // 关闭编辑表单
+        function closeEditForm() {
+            document.getElementById('editFormOverlay').style.display = 'none';
+        }
+        
+        // 保存编辑
+        document.getElementById('editJobForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var jobId = parseInt(document.getElementById('editJobId').value);
+            var jobs = JSON.parse(localStorage.getItem('jobs'));
+            var jobIndex = jobs.findIndex(function(job) {
+                return job.id === jobId;
+            });
+            
+            if (jobIndex !== -1) {
+                jobs[jobIndex] = {
+                    ...jobs[jobIndex],
+                    companyName: document.getElementById('editCompanyName').value,
+                    jobTitle: document.getElementById('editJobTitle').value,
+                    salary: document.getElementById('editSalary').value,
+                    location: document.getElementById('editLocation').value,
+                    experience: document.getElementById('editExperience').value,
+                    education: document.getElementById('editEducation').value,
+                    jobType: document.getElementById('editJobType').value,
+                    requirements: document.getElementById('editRequirements').value,
+                    description: document.getElementById('editDescription').value,
+                    applicationDate: document.getElementById('editApplicationDate').value,
+                    notes: document.getElementById('editNotes').value
+                };
+                
+                localStorage.setItem('jobs', JSON.stringify(jobs));
+                closeEditForm();
+                loadJobs();
+            }
+        });
+        
+        // 点击弹窗外部关闭编辑表单
+        document.getElementById('editFormOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditForm();
+            }
+        });
+        
+        // 页面加载时初始化
+        window.onload = function() {
+            // 为筛选条件添加实时搜索功能
+            document.getElementById('searchCompany').addEventListener('input', searchJobs);
+            document.getElementById('searchJob').addEventListener('input', searchJobs);
+            document.getElementById('filterExperience').addEventListener('change', searchJobs);
+            document.getElementById('filterEducation').addEventListener('change', searchJobs);
+        };
+    </script>
+</body>
+</html>
